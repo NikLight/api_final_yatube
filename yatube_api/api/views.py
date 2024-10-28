@@ -30,7 +30,7 @@ class PostViewSet(viewsets.ModelViewSet):
         Проверка авторизации для POST запроса.
         """
         if self.action == 'create':
-            return (NonAuthorizedUserIsNotAllowed(),)
+            return (NonAuthorizedUserIsNotAllowed(), )
 
         return super().get_permissions()
 

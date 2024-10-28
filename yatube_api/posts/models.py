@@ -3,6 +3,7 @@ from django.db import models
 
 from yatube_api.settings import VISUALIZE_LENGTH_TEXT
 
+
 User = get_user_model()
 
 
@@ -17,8 +18,7 @@ class Group(models.Model):
 
 class Post(models.Model):
     text = models.TextField()
-    pub_date = models.DateTimeField(
-        'Дата публикации',
+    pub_date = models.DateTimeField('Дата публикации',
         auto_now_add=True)
     author = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name='posts'

@@ -21,8 +21,6 @@ INSTALLED_APPS = [
     'djoser',
     'posts.apps.PostsConfig',
     'api.apps.ApiConfig',
-    'django_extensions',
-
 ]
 
 MIDDLEWARE = [

@@ -6,11 +6,6 @@ class IsOwnerOrReadOnly(permissions.BasePermission):
     """
     Является ли пользователь автором объекта.
     """
-    # def has_permission(self, request, view):
-    #     # Разрешаем только аутентифицированным пользователям
-    #     return request.user.is_authenticated
-
-
     def has_object_permission(self, request, view, obj):
 
         if request.method in permissions.SAFE_METHODS:
@@ -21,6 +16,8 @@ class IsOwnerOrReadOnly(permissions.BasePermission):
 
 
 class NonAuthorizedUserIsNotAllowed(BasePermission):
-
+    """
+    Является ли пользователь авторизированым.
+    """
     def has_permission(self, request, view):
         return request.user.is_authenticated

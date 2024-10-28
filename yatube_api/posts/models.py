@@ -3,9 +3,7 @@ from django.db import models
 
 from yatube_api.settings import VISUALIZE_LENGTH_TEXT
 
-
 User = get_user_model()
-
 
 class Group(models.Model):
     title = models.CharField(max_length=200)
@@ -31,6 +29,7 @@ class Post(models.Model):
         Group, on_delete=models.SET_NULL,
         related_name='posts', blank=True, null=True
     )
+
     def __str__(self):
         return self.text[:VISUALIZE_LENGTH_TEXT]
 
@@ -50,11 +49,13 @@ class Comment(models.Model):
 
 class Follow(models.Model):
     user = models.ForeignKey(
-        User, on_delete=models.CASCADE,
+        User,
+        on_delete=models.CASCADE,
         related_name='follower'
     )
     following = models.ForeignKey(
-        User, on_delete=models.CASCADE,
+        User,
+        on_delete=models.CASCADE,
         related_name='following'
     )
 

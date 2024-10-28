@@ -2,7 +2,8 @@ from rest_framework import viewsets,filters
 from rest_framework.generics import get_object_or_404
 from rest_framework.pagination import LimitOffsetPagination
 
-from api.permissions import IsOwnerOrReadOnly, NonAuthorizedUserIsNotAllowed
+from api.permissions import (IsOwnerOrReadOnly,
+                             NonAuthorizedUserIsNotAllowed)
 from posts.models import Post, Group, Follow
 from api.serializers import (PostSerializer,
                              GroupSerializer,

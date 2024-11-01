@@ -6,7 +6,10 @@ from rest_framework.permissions import IsAuthenticated
 
 from api.permissions import IsOwnerOrReadOnly
 from posts.models import Post, Group
-from api.serializers import PostSerializer, GroupSerializer, CommentSerializer, FollowSerializer
+from api.serializers import (PostSerializer,
+                             GroupSerializer,
+                             CommentSerializer,
+                             FollowSerializer)
 
 
 class PostViewSet(viewsets.ModelViewSet):
@@ -60,7 +63,8 @@ class CommentViewSet(viewsets.ModelViewSet):
         Создание комментария с привязкой к посту.
         """
         post = self.get_post()
-        serializer.save(author=self.request.user, post=post)
+        serializer.save(author=self.request.user,
+                        post=post)
 
 
 class FollowViewSet(viewsets.ModelViewSet):

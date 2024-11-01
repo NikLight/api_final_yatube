@@ -1,14 +1,12 @@
 from rest_framework import viewsets, filters
+from rest_framework.exceptions import PermissionDenied
 from rest_framework.generics import get_object_or_404
 from rest_framework.pagination import LimitOffsetPagination
+from rest_framework.permissions import IsAuthenticated
 
-from api.permissions import (IsOwnerOrReadOnly,
-                             NonAuthorizedUserIsNotAllowed)
-from posts.models import Post, Group, Follow
-from api.serializers import (PostSerializer,
-                             GroupSerializer,
-                             CommentSerializer,
-                             FollowSerializer)
+from api.permissions import IsOwnerOrReadOnly
+from posts.models import Post, Group
+from api.serializers import PostSerializer, GroupSerializer, CommentSerializer, FollowSerializer
 
 
 class PostViewSet(viewsets.ModelViewSet):
@@ -26,15 +24,6 @@ class PostViewSet(viewsets.ModelViewSet):
         """
         serializer.save(author=self.request.user)
 
-    def get_permissions(self):
-        """
-        Проверка авторизации для POST запроса.
-        """
-        if self.action == 'create':
-            return (NonAuthorizedUserIsNotAllowed(), )
-
-        return super().get_permissions()
-
 
 class GroupViewSet(viewsets.ReadOnlyModelViewSet):
     """
@@ -44,15 +33,6 @@ class GroupViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = GroupSerializer
     permission_classes = [IsOwnerOrReadOnly]
 
-    def get_permissions(self):
-        """
-        Проверка авторизации для POST запроса.
-        """
-        if self.action == 'create':
-            return (NonAuthorizedUserIsNotAllowed(),)
-
-        return super().get_permissions()
-
 
 class CommentViewSet(viewsets.ModelViewSet):
     """
@@ -61,32 +41,26 @@ class CommentViewSet(viewsets.ModelViewSet):
     serializer_class = CommentSerializer
     permission_classes = [IsOwnerOrReadOnly]
 
-    def get_permissions(self):
+    def get_post(self):
         """
-        Проверка авторизации для POST запроса.
+        Получение объекта поста по post_id.
         """
-        if self.action == 'create':
-            return (NonAuthorizedUserIsNotAllowed(),)
-
-        return super().get_permissions()
+        post_id = self.kwargs.get('post_id')
+        return get_object_or_404(Post, id=post_id)
 
     def get_queryset(self):
         """
         Получение комментариев для поста.
         """
-        post_id = get_object_or_404(
-            Post,
-            id=self.kwargs.get('post_id'))
-
-        return post_id.comments.all()
+        post = self.get_post()
+        return post.comments.all()
 
     def perform_create(self, serializer):
         """
         Создание комментария с привязкой к посту.
         """
-        post_id = self.kwargs.get('post_id')
-        post = get_object_or_404(Post, id=post_id)
-        serializer.save(post=post, author=self.request.user)
+        post = self.get_post()
+        serializer.save(author=self.request.user, post=post)
 
 
 class FollowViewSet(viewsets.ModelViewSet):
@@ -96,24 +70,17 @@ class FollowViewSet(viewsets.ModelViewSet):
     serializer_class = FollowSerializer
     filter_backends = [filters.SearchFilter]
     search_fields = ['following__username']
-    permission_classes = [IsOwnerOrReadOnly]
-
-    def get_permissions(self):
-        """
-        Проверка авторизации для POST запроса.
-        """
-        if self.action:
-            return (NonAuthorizedUserIsNotAllowed(),)
-        return super().get_permissions()
+    permission_classes = [IsAuthenticated,
+                          IsOwnerOrReadOnly]
 
     def get_queryset(self):
         """
         Получение подписок только для уникального автора.
         """
-        return Follow.objects.filter(user=self.request.user)
+        return self.request.user.follower.all()
 
     def perform_create(self, serializer):
         """
-        Получение данных slug пользователя, для автозаполнения.
+        Получение данных пользователя для автозаполнения.
         """
         serializer.save(user=self.request.user)

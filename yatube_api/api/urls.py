@@ -33,7 +33,5 @@ api_router_v1.register(r'follow',
 urlpatterns = [
     # Включаем маршруты, сгенерированные роутером
     path('v1/', include(api_router_v1.urls)),
-
-    path('v1/', include('djoser.urls')),
     path('v1/', include('djoser.urls.jwt')),
 ]

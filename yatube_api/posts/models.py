@@ -14,6 +14,9 @@ class Group(models.Model):
     def __str__(self):
         return self.title
 
+    class Meta:
+        verbose_name = 'Группа'
+
 
 class Post(models.Model):
     text = models.TextField()
@@ -34,6 +37,9 @@ class Post(models.Model):
     def __str__(self):
         return self.text[:VISUALIZE_LENGTH_TEXT]
 
+    class Meta:
+        ordering = ['-pub_date']
+
 
 class Comment(models.Model):
     author = models.ForeignKey(
@@ -46,6 +52,9 @@ class Comment(models.Model):
     created = models.DateTimeField(
         'Дата добавления', auto_now_add=True, db_index=True
     )
+
+    class Meta:
+        verbose_name = 'Комментарий'
 
 
 class Follow(models.Model):

@@ -3,6 +3,9 @@ student: Nick_Light
 
 Сервис предназначен для платформы блогов, где можно создать и прокомментировать публикации.
 
+![Screenshot from 2024-12-08 16-03-25](https://github.com/user-attachments/assets/b332997e-0a7f-46e2-97f7-0f6923cc3b41)
+
+
 # Yatube
 
 ## Описание
